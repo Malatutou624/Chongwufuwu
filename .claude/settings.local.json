@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "permissions": {
     "allow": [
       "Bash(gh run list:*)",
@@ -6,5 +7,7 @@
       "Bash(git commit:*)"
     ]
   },
+=======
+>>>>>>> 2a2b5f6f7504d22199f04c99537463dab663ba38
   "spinnerTipsEnabled": true
 }
