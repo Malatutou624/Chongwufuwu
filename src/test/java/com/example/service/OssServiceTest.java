@@ -28,11 +28,11 @@ class OssServiceTest {
     @Mock
     private OSS ossClient;
 
-    @InjectMocks
     private FileUploadService fileUploadService;
 
     @BeforeEach
     void setUp() {
+        fileUploadService = new FileUploadService();
         ReflectionTestUtils.setField(fileUploadService, "bucketName", "test-bucket");
         ReflectionTestUtils.setField(fileUploadService, "urlPrefix", "https://test-bucket.oss.com/");
         ReflectionTestUtils.setField(fileUploadService, "accessKeyId", "test-access-key");

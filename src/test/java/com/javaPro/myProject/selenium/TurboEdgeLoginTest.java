@@ -37,10 +37,13 @@ public class TurboEdgeLoginTest {
         long startTime = System.currentTimeMillis();
         System.out.println("🚀 TURBO模式启动");
         
-
-
-        // 2. 配置Edge驱动
-        System.setProperty("webdriver.edge.driver", "D:\\edgedriver_win64\\msedgedriver.exe");
+        // 使用WebDriverManager自动下载和管理驱动
+        try {
+            io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
+        } catch (Exception e) {
+            System.out.println("⚠️ WebDriverManager设置失败: " + e.getMessage());
+            // 不中断，继续尝试使用系统中的驱动
+        }
 
         // 3. 极简Edge配置
         EdgeOptions options = new EdgeOptions();

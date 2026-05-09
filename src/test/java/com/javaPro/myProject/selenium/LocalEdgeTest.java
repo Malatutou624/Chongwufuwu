@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assumptions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,10 +42,17 @@ public class LocalEdgeTest {
     void setUp() {
         System.out.println("=== 开始强化版Edge驱动测试准备 ===");
 
-        // 检查本地驱动是否存在
+        // 检查本地驱动是否存在或使用WebDriverManager
         File driverFile = new File(LOCAL_DRIVER_PATH);
         if (!driverFile.exists()) {
-            fail("本地Edge驱动不存在: " + LOCAL_DRIVER_PATH);
+            System.out.println("⚠️ 本地驱动不存在: " + LOCAL_DRIVER_PATH);
+            System.out.println("尝试使用WebDriverManager...");
+            try {
+                io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
+            } catch (Exception e) {
+                System.out.println("❌ WebDriverManager设置失败: " + e.getMessage());
+                Assumptions.assumeTrue(false, "WebDriver驱动不可用，跳过此测试");
+            }
         }
 
         // 检查驱动文件权限

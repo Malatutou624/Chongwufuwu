@@ -18,7 +18,12 @@ CREATE TABLE IF NOT EXISTS sysuser (
     petname VARCHAR(50),
     petage INT,
     petdes VARCHAR(500),
-    pettype VARCHAR(50)
+    pettype VARCHAR(50),
+    province VARCHAR(50),
+    city VARCHAR(50),
+    district VARCHAR(50),
+    longitude DOUBLE,
+    latitude DOUBLE
 );
 
 -- 创建公司表
@@ -38,6 +43,11 @@ CREATE TABLE IF NOT EXISTS company (
     avg_rating DECIMAL(3,2) DEFAULT 4.5,
     rating_count INT DEFAULT 0,
     service_area VARCHAR(200) DEFAULT '全市',
+    longitude DOUBLE,
+    latitude DOUBLE,
+    province VARCHAR(50),
+    city VARCHAR(50),
+    district VARCHAR(50),
     FOREIGN KEY (userid) REFERENCES sysuser(id)
 );
 

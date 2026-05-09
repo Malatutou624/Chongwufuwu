@@ -42,14 +42,20 @@ public class FastEdgeLoginTest {
         long startTime = System.currentTimeMillis();
         System.out.println("=== 极速启动模式 ===");
 
-        // 1. 并行检查应用程序（异步）
-        
+        // 1. 使用WebDriverManager管理驱动
         try {
-            // 直接设置系统属性，避免网络连接
-            System.setProperty("webdriver.edge.driver", "D:\\edgedriver_win64\\msedgedriver.exe");
-            System.out.println("✅ 使用本地Edge驱动配置");
+            io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
+            System.out.println("✅ WebDriverManager配置完成");
         } catch (Exception e) {
-            System.out.println("⚠ 驱动配置警告: " + e.getMessage());
+            System.out.println("❌ WebDriverManager配置失败: " + e.getMessage());
+            // 尝试本地驱动
+            try {
+                System.setProperty("webdriver.edge.driver", "D:\\edgedriver_win64\\msedgedriver.exe");
+                System.out.println("✅ 使用本地Edge驱动配置");
+            } catch (Exception ex) {
+                System.out.println("❌ 驱动配置全部失败，跳过测试");
+                Assumptions.assumeTrue(false, "WebDriver驱动不可用");
+            }
         }
 
         // 3. 极速配置Edge选项

@@ -1,9 +1,11 @@
 package com.javaPro.myProject.selenium;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assumptions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,18 +43,25 @@ public class SimpleEdgeAutoTest {
         System.out.println("=== 开始简化版Edge自动化测试准备 ===");
         
         try {
-            // 检查本地驱动是否存在
-            File driverFile = new File(LOCAL_DRIVER_PATH);
-            if (!driverFile.exists()) {
-                System.out.println("❌ 本地Edge驱动不存在: " + LOCAL_DRIVER_PATH);
-                System.out.println("⚠ 跳过Selenium测试，因为驱动文件不存在");
-                org.junit.jupiter.api.Assumptions.assumeTrue(false, "Edge驱动文件不存在");
-                return;
+            // 首先尝试使用WebDriverManager
+            try {
+                WebDriverManager.edgedriver().setup();
+                System.out.println("✅ WebDriverManager设置完成");
+            } catch (Exception e) {
+                System.out.println("⚠ WebDriverManager失败: " + e.getMessage());
+                // 尝试本地驱动
+                File driverFile = new File(LOCAL_DRIVER_PATH);
+                if (!driverFile.exists()) {
+                    System.out.println("❌ 本地Edge驱动不存在: " + LOCAL_DRIVER_PATH);
+                    System.out.println("⚠ 跳过Selenium测试，因为驱动文件不存在");
+                    Assumptions.assumeTrue(false, "Edge驱动文件不存在");
+                    return;
+                }
+                
+                // 设置系统属性
+                System.setProperty("webdriver.edge.driver", LOCAL_DRIVER_PATH);
+                System.out.println("✅ 设置Edge驱动路径: " + LOCAL_DRIVER_PATH);
             }
-            
-            // 设置系统属性
-            System.setProperty("webdriver.edge.driver", LOCAL_DRIVER_PATH);
-            System.out.println("✅ 设置Edge驱动路径: " + LOCAL_DRIVER_PATH);
             
             // 创建最简单的Edge选项
             EdgeOptions options = new EdgeOptions();

@@ -11,6 +11,7 @@ import com.javaPro.myProject.service.OssDirectUploadService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assumptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,10 +59,10 @@ public class OssConnectionIntegrationTest {
     @BeforeEach
     void setUp() {
         // 检查基础配置
-        assertNotNull(ossClient, "OSS客户端未正确配置");
-        assertNotNull(ossDirectUploadService, "OSS直传服务未正确配置");
-        assertFalse(accessKeyId.isEmpty(), "AccessKeyId未配置");
-        assertFalse(endpoint.isEmpty(), "Endpoint未配置");
+        Assumptions.assumeTrue(ossClient != null, "OSS客户端未配置，跳过此测试");
+        Assumptions.assumeTrue(ossDirectUploadService != null, "OSS直传服务未配置，跳过此测试");
+        Assumptions.assumeFalse(accessKeyId.isEmpty(), "AccessKeyId未配置，跳过此测试");
+        Assumptions.assumeFalse(endpoint.isEmpty(), "Endpoint未配置，跳过此测试");
     }
 
     @Test
