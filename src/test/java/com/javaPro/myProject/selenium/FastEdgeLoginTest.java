@@ -50,8 +50,9 @@ public class FastEdgeLoginTest {
             System.out.println("❌ WebDriverManager配置失败: " + e.getMessage());
             // 尝试本地驱动
             try {
-                System.setProperty("webdriver.edge.driver", "D:\\edgedriver_win64\\msedgedriver.exe");
-                System.out.println("✅ 使用本地Edge驱动配置");
+                // 🔥 这里注释掉！CI 环境不需要本地路径！
+                // System.setProperty("webdriver.edge.driver", "D:\\edgedriver_win64\\msedgedriver.exe");
+                System.out.println("✅ 使用系统自动配置的Edge驱动");
             } catch (Exception ex) {
                 System.out.println("❌ 驱动配置全部失败，跳过测试");
                 Assumptions.assumeTrue(false, "WebDriver驱动不可用");
@@ -63,8 +64,8 @@ public class FastEdgeLoginTest {
         
         // 无头模式 - 最大速度提升
         if (HEADLESS_MODE) {
-            options.addArguments("--headless");
-            options.addArguments("--window-size=1280,720");
+            options.addArguments("--headless=new"); // 🔥 修复：新版无头模式（CI必须用这个）
+            options.addArguments("--window-size=1920,1080");
         }
         
         // 极速优化配置

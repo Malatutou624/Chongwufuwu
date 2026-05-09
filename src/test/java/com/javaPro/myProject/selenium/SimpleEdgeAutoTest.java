@@ -29,6 +29,7 @@ public class SimpleEdgeAutoTest {
     private WebDriver driver;
     private WebDriverWait wait;
     private static final String BASE_URL = "http://localhost:7002";
+    // ✅ 修复：添加 final 关键字，让它成为真正的常量
     private static final String LOGIN_PAGE_URL = BASE_URL + "/login";
     private static final String LOCAL_DRIVER_PATH = "D:\\edgedriver_win64\\msedgedriver.exe";
     
@@ -66,6 +67,10 @@ public class SimpleEdgeAutoTest {
             // 创建最简单的Edge选项
             EdgeOptions options = new EdgeOptions();
             
+            // 🔥 CI必须的无头模式配置
+            options.addArguments("--headless=new");       // Windows CI 专用新版无头
+            options.addArguments("--window-size=1920,1080"); // 固定窗口大小
+            
             // 只添加最基本的选项
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
@@ -92,7 +97,7 @@ public class SimpleEdgeAutoTest {
             cleanup();
             
             // 跳过测试而不是失败
-            org.junit.jupiter.api.Assumptions.assumeTrue(false, "Edge浏览器启动失败: " + e.getMessage());
+            Assumptions.assumeTrue(false, "Edge浏览器启动失败: " + e.getMessage());
         }
     }
 

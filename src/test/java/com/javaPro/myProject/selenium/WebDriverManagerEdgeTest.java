@@ -35,6 +35,10 @@ public class WebDriverManagerEdgeTest {
     private static final String USER_USERNAME = "user";
     private static final String USER_PASSWORD = "123456";
 
+    // ====================== 🔥 新增：无头模式开关（CI必须开启）======================
+    private static final boolean HEADLESS = true;
+    // ============================================================================
+
     @BeforeEach
     void setUp() {
         System.out.println("=== 开始WebDriverManager Edge测试准备 ===");
@@ -101,6 +105,15 @@ public class WebDriverManagerEdgeTest {
     private EdgeOptions createEdgeOptions() {
         EdgeOptions options = new EdgeOptions();
         
+        // ====================== 🔥 关键：无头模式 ======================
+        if (HEADLESS) {
+            options.addArguments("--headless=new"); // Windows CI 专用
+            options.addArguments("--window-size=1920,1080");
+        } else {
+            options.addArguments("--start-maximized");
+        }
+        // ==============================================================
+
         // 基础稳定性选项
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
@@ -109,7 +122,6 @@ public class WebDriverManagerEdgeTest {
         options.addArguments("--disable-web-security");
         
         // 窗口管理
-        options.addArguments("--start-maximized");
         options.addArguments("--disable-infobars");
         
         // 性能优化

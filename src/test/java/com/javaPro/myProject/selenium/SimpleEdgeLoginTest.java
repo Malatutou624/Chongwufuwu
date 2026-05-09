@@ -45,8 +45,9 @@ public class SimpleEdgeLoginTest {
     private static final String ADMIN_HOME_URL = BASE_URL + "/web/index";     // 角色1/3跳转地址
     private static final String USER_HOME_URL = BASE_URL + "/web/userindex"; // 角色2跳转地址
 
-    // 性能优化选项：是否启用无头模式（true=更快但不可见，false=可见但较慢）
-    private static final boolean HEADLESS_MODE = false; // 设置为true可大幅提升速度
+    // ====================== 🔥 关键修改：强制开启无头模式（CI必须）======================
+    private static final boolean HEADLESS_MODE = true; // 改为 true
+    // =================================================================================
 
     /**
      * 测试前初始化：检查应用程序、启动 Edge 浏览器、设置等待时间
@@ -81,7 +82,8 @@ public class SimpleEdgeLoginTest {
 
         // 无头模式配置（大幅提升速度）
         if (HEADLESS_MODE) {
-            options.addArguments("--headless");
+            // ====================== 🔥 关键修改：使用新版无头 ======================
+            options.addArguments("--headless=new"); // CI 必须用这个！
             options.addArguments("--window-size=1920,1080");
             System.out.println("✅ 启用无头模式，测试速度将大幅提升");
         } else {

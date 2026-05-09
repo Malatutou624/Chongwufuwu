@@ -69,8 +69,9 @@ public class WebDriverConfig {
     public static EdgeOptions createHeadlessEdgeOptions() {
         EdgeOptions options = createStandardEdgeOptions();
         
-        // 启用无头模式
-        options.addArguments("--headless");
+        // ====================== 🔥 关键修复：新版无头模式 ======================
+        options.addArguments("--headless=new"); // 已修复！Windows CI 专用
+        // ====================================================================
         
         // 额外的性能优化
         options.addArguments("--disable-images");

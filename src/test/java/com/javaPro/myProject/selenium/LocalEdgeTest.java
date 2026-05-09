@@ -112,6 +112,11 @@ public class LocalEdgeTest {
     private EdgeOptions createRobustEdgeOptions() {
         EdgeOptions options = new EdgeOptions();
 
+        // ====================== 🔥 这里加了无头模式（CI必须）======================
+        options.addArguments("--headless=new");       // 新版无头模式（Windows CI 专用）
+        options.addArguments("--window-size=1920,1080"); // 固定窗口大小
+        // ======================================================================
+
         // 基础稳定性选项
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");

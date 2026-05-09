@@ -47,7 +47,11 @@ public class TurboEdgeLoginTest {
 
         // 3. 极简Edge配置
         EdgeOptions options = new EdgeOptions();
-        options.addArguments("--headless");                    // 无头模式
+        
+        // ====================== 🔥 关键修复：新版无头模式（Windows CI 必须）======================
+        options.addArguments("--headless=new"); // 已修复！
+        // =====================================================================================
+        
         options.addArguments("--no-sandbox");                  
         options.addArguments("--disable-dev-shm-usage");       
         options.addArguments("--disable-gpu");
