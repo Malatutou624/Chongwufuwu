@@ -81,9 +81,9 @@ class ProductControllerTest {
                         .param("productname", "宠物")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.list").isArray())
-                .andExpect(jsonPath("$.list[0].productname").value("宠物美容服务"))
-                .andExpect(jsonPath("$.list[1].productname").value("宠物寄养服务"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].productname").value("宠物美容服务"))
+                .andExpect(jsonPath("$[1].productname").value("宠物寄养服务"));
     }
 
     /**
@@ -99,9 +99,9 @@ class ProductControllerTest {
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.data.productname").value("宠物美容服务"))
-                .andExpect(jsonPath("$.data.kedanjia").value("100.00"));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.productname").value("宠物美容服务"))
+                .andExpect(jsonPath("$.kedanjia").value("100.00"));
     }
 
     /**
@@ -117,7 +117,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testProduct)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.productname").value("宠物美容服务"));
+                .andExpect(jsonPath("$.productname").value("宠物美容服务"));
     }
 
     /**
@@ -134,7 +134,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testProduct)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.productname").value("更新后的宠物美容服务"));
+                .andExpect(jsonPath("$.productname").value("更新后的宠物美容服务"));
     }
 
     /**
@@ -150,7 +150,7 @@ class ProductControllerTest {
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").value(true));
+                .andExpect(jsonPath("$").value(true));
     }
 
     /**
@@ -166,7 +166,7 @@ class ProductControllerTest {
                         .param("id", "999")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isEmpty());
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     /**
@@ -200,6 +200,6 @@ class ProductControllerTest {
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.kucun").value("0"));
+                .andExpect(jsonPath("$.kucun").value("0"));
     }
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+// 🔥 修复：添加 SpringBootTest 注解，指定启动类，解决“找不到配置”错误
+@SpringBootTest(classes = com.javaPro.myProject.SchedulingApplication.class)
 @ExtendWith(MockitoExtension.class)
 class OssServiceTest {
 

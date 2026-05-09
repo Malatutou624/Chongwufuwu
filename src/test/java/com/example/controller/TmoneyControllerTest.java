@@ -78,9 +78,9 @@ class TmoneyControllerTest {
                         .param("userid", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.list").isArray())
-                .andExpect(jsonPath("$.list[0].money").value("100.00"))
-                .andExpect(jsonPath("$.list[1].money").value("50.00"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].money").value("100.00"))
+                .andExpect(jsonPath("$[1].money").value("50.00"));
     }
 
     /**
@@ -95,9 +95,9 @@ class TmoneyControllerTest {
         mockMvc.perform(get("/tmoney/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.data.money").value("100.00"))
-                .andExpect(jsonPath("$.data.auditstatus").value("已审核"));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.money").value("100.00"))
+                .andExpect(jsonPath("$.auditstatus").value("已审核"));
     }
 
     /**
@@ -113,8 +113,8 @@ class TmoneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testTmoney)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.money").value("100.00"))
-                .andExpect(jsonPath("$.data.userid").value(1));
+                .andExpect(jsonPath("$.money").value("100.00"))
+                .andExpect(jsonPath("$.userid").value(1));
     }
 
     /**
@@ -131,7 +131,7 @@ class TmoneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testTmoney)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.auditstatus").value("已审核"));
+                .andExpect(jsonPath("$.auditstatus").value("已审核"));
     }
 
     /**
@@ -147,7 +147,7 @@ class TmoneyControllerTest {
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").value(true));
+                .andExpect(jsonPath("$").value(true));
     }
 
     /**
@@ -167,7 +167,7 @@ class TmoneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(minTmoney)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.money").value("1.00"));
+                .andExpect(jsonPath("$.money").value("1.00"));
 
         // 测试大额充值
         Tmoney maxTmoney = new Tmoney();
@@ -179,7 +179,7 @@ class TmoneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(maxTmoney)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.money").value("10000.00"));
+                .andExpect(jsonPath("$.money").value("10000.00"));
     }
 
     /**
@@ -198,7 +198,7 @@ class TmoneyControllerTest {
         mockMvc.perform(get("/tmoney/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.auditstatus").value("待审核"));
+                .andExpect(jsonPath("$.auditstatus").value("待审核"));
 
         // 测试处理成功状态
         pendingTmoney.setAuditstatus("已审核"); // 处理成功
@@ -208,7 +208,7 @@ class TmoneyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pendingTmoney)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.auditstatus").value("已审核"));
+                .andExpect(jsonPath("$.auditstatus").value("已审核"));
     }
 
     /**
@@ -225,8 +225,8 @@ class TmoneyControllerTest {
                         .param("userid", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.list").isArray())
-                .andExpect(jsonPath("$.list.length()").value(2));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2));
     }
 
     /**
@@ -241,7 +241,7 @@ class TmoneyControllerTest {
         mockMvc.perform(get("/tmoney/999")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isEmpty());
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     /**
@@ -257,8 +257,8 @@ class TmoneyControllerTest {
         mockMvc.perform(get("/tmoney")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.list").isArray())
-                .andExpect(jsonPath("$.list[0].money").value("100.00"))
-                .andExpect(jsonPath("$.list[1].money").value("50.00"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].money").value("100.00"))
+                .andExpect(jsonPath("$[1].money").value("50.00"));
     }
 }
