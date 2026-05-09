@@ -39,14 +39,16 @@ public class BaseController {//extends 继承 为了方便子类 去 使用父�
         HttpServletResponse response = HttpUtil.getResponse();
 
         // 安全地解析分页参数，提供默认值
-        String pageNumStr = HttpUtil.getRequestPara("pageNum");
-        String pageSizeStr = HttpUtil.getRequestPara("pageSize");
+        String pageNumStr = request != null ? request.getParameter("pageNum") : null;
+        String pageSizeStr = request != null ? request.getParameter("pageSize") : null;
 
         int pageNum = (pageNumStr != null && !pageNumStr.isEmpty()) ? Integer.parseInt(pageNumStr) : 1;
         int pageSize = (pageSizeStr != null && !pageSizeStr.isEmpty()) ? Integer.parseInt(pageSizeStr) : 10;
 
-        assert request != null;
-        String orderBy = getOrderBy(request,response, "orderBy");
+        String orderBy = "";
+        if (request != null && response != null) {
+            orderBy = getOrderBy(request, response, "orderBy");
+        }
         if (!"".equals(orderBy)){
             PageHelper.startPage(pageNum,pageSize,orderBy).setReasonable(true);
         }else {

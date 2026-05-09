@@ -48,11 +48,21 @@ public class ProductServiceImpl implements ProductService {
     public Product queryById(Integer id) {
         Product product = this.productDao.queryById(id);
         if (product != null) {
-            // 处理详情图片
-            if (product.getDetailimg() != null) {
-                List<String> list = JSON.parseArray(product.getDetailimg(), String.class);
-                System.out.println("list = " + list);
-                product.setDetailImgList(list);
+            // 处理详情图片，增加错误处理
+            if (product.getDetailimg() != null && !product.getDetailimg().isEmpty()) {
+                try {
+                    // 尝试解析为 JSON 数组
+                    if (product.getDetailimg().startsWith("[")) {
+                        List<String> list = JSON.parseArray(product.getDetailimg(), String.class);
+                        product.setDetailImgList(list);
+                    } else {
+                        // 如果不是 JSON 数组格式，直接作为单个图片处理
+                        product.setDetailImgList(Arrays.asList(product.getDetailimg()));
+                    }
+                } catch (Exception e) {
+                    // JSON 解析失败时，作为单个图片处理
+                    product.setDetailImgList(Arrays.asList(product.getDetailimg()));
+                }
             }
 
             // 获取服务商信息
@@ -102,11 +112,21 @@ public class ProductServiceImpl implements ProductService {
     public Product queryById(Integer id, Integer userid) {
         Product product = this.productDao.queryById(id);
         if (product != null) {
-            // 处理详情图片
-            if (product.getDetailimg() != null) {
-                List<String> list = JSON.parseArray(product.getDetailimg(), String.class);
-                System.out.println("list = " + list);
-                product.setDetailImgList(list);
+            // 处理详情图片，增加错误处理
+            if (product.getDetailimg() != null && !product.getDetailimg().isEmpty()) {
+                try {
+                    // 尝试解析为 JSON 数组
+                    if (product.getDetailimg().startsWith("[")) {
+                        List<String> list = JSON.parseArray(product.getDetailimg(), String.class);
+                        product.setDetailImgList(list);
+                    } else {
+                        // 如果不是 JSON 数组格式，直接作为单个图片处理
+                        product.setDetailImgList(Arrays.asList(product.getDetailimg()));
+                    }
+                } catch (Exception e) {
+                    // JSON 解析失败时，作为单个图片处理
+                    product.setDetailImgList(Arrays.asList(product.getDetailimg()));
+                }
             }
 
             // 获取服务商信息
@@ -163,9 +183,20 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = this.productDao.queryAllByLimit(product);
         if (!CollectionUtils.isEmpty(products)){
             for (Product item : products) {
-                // 始终设置detailImgList
-                if (item.getDetailimg() != null) {
-                    item.setDetailImgList(JSON.parseArray(item.getDetailimg(), String.class));
+                // 始终设置detailImgList，增加错误处理
+                if (item.getDetailimg() != null && !item.getDetailimg().isEmpty()) {
+                    try {
+                        // 尝试解析为 JSON 数组
+                        if (item.getDetailimg().startsWith("[")) {
+                            item.setDetailImgList(JSON.parseArray(item.getDetailimg(), String.class));
+                        } else {
+                            // 如果不是 JSON 数组格式，直接作为单个图片处理
+                            item.setDetailImgList(Arrays.asList(item.getDetailimg()));
+                        }
+                    } catch (Exception e) {
+                        // JSON 解析失败时，作为单个图片处理
+                        item.setDetailImgList(Arrays.asList(item.getDetailimg()));
+                    }
                 }
 
                 // 动态计算销量：基于当前用户的订单数量

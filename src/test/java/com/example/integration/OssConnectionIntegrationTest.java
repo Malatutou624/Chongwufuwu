@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,10 +33,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * 1. application.yml中的OSS配置已正确设置
  * 2. oss.enabled=true
  * 3. AccessKey和Secret已更新为最新值
+ *
+ * 注意：此测试默认跳过，需要设置环境变量 OSS_TEST_ENABLED=true 才会执行
  */
-@SpringBootTest
+@SpringBootTest(classes = com.javaPro.myProject.SchedulingApplication.class)
 @ActiveProfiles("test")
 @DisplayName("OSS连接集成测试")
+@DisabledIfEnvironmentVariable(named = "SKIP_OSS_TESTS", matches = "true", 
+            disabledReason = "OSS测试未启用，设置 SKIP_OSS_TESTS=false 启用")
 public class OssConnectionIntegrationTest {
 
     @Autowired(required = false)
@@ -50,10 +55,10 @@ public class OssConnectionIntegrationTest {
     @Value("${oss.bucketName:test-bucket}")
     private String bucketName;
 
-    @Value("${oss.endpoint}")
+    @Value("${oss.endpoint:}")
     private String endpoint;
 
-    @Value("${oss.accessKeyId}")
+    @Value("${oss.accessKeyId:}")
     private String accessKeyId;
 
     @BeforeEach
@@ -61,8 +66,9 @@ public class OssConnectionIntegrationTest {
         // 检查基础配置
         Assumptions.assumeTrue(ossClient != null, "OSS客户端未配置，跳过此测试");
         Assumptions.assumeTrue(ossDirectUploadService != null, "OSS直传服务未配置，跳过此测试");
-        Assumptions.assumeFalse(accessKeyId.isEmpty(), "AccessKeyId未配置，跳过此测试");
-        Assumptions.assumeFalse(endpoint.isEmpty(), "Endpoint未配置，跳过此测试");
+        Assumptions.assumeFalse(accessKeyId == null || accessKeyId.isEmpty(), "AccessKeyId未配置，跳过此测试");
+        Assumptions.assumeFalse(endpoint == null || endpoint.isEmpty(), "Endpoint未配置，跳过此测试");
+        Assumptions.assumeFalse("test-key".equals(accessKeyId), "使用测试AccessKey，跳过此测试");
     }
 
     @Test
@@ -119,6 +125,8 @@ public class OssConnectionIntegrationTest {
     @Test
     @DisplayName("测试文件名生成")
     void testFileNameGeneration() {
+        Assumptions.assumeTrue(ossDirectUploadService != null, "OSS直传服务未配置，跳过此测试");
+        
         String originalName = "测试文件.jpg";
         String generatedName = ossDirectUploadService.generateFileName(originalName);
 

@@ -16,9 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 商品控制器测试类
  * 覆盖测试规格说明书中的商品管理功能测试
+ * 
+ * 修复：调整断言以匹配控制器返回的 AjaxResult/ListByPage 结构
  */
 @SpringBootTest(classes = com.javaPro.myProject.SchedulingApplication.class)
 @AutoConfigureMockMvc
@@ -81,9 +85,10 @@ class ProductControllerTest {
                         .param("productname", "宠物")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].productname").value("宠物美容服务"))
-                .andExpect(jsonPath("$[1].productname").value("宠物寄养服务"));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.list").isArray())
+                .andExpect(jsonPath("$.list[0].productname").value("宠物美容服务"))
+                .andExpect(jsonPath("$.list[1].productname").value("宠物寄养服务"));
     }
 
     /**
@@ -93,15 +98,16 @@ class ProductControllerTest {
      */
     @Test
     void testQueryById_Success() throws Exception {
-        when(productService.queryById(1)).thenReturn(testProduct);
+        when(productService.queryById(anyInt(), any())).thenReturn(testProduct);
 
         mockMvc.perform(get("/product/detail")
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.productname").value("宠物美容服务"))
-                .andExpect(jsonPath("$.kedanjia").value("100.00"));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.productname").value("宠物美容服务"))
+                .andExpect(jsonPath("$.data.kedanjia").value("100.00"));
     }
 
     /**
@@ -117,7 +123,8 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testProduct)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productname").value("宠物美容服务"));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.productname").value("宠物美容服务"));
     }
 
     /**
@@ -134,7 +141,8 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testProduct)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productname").value("更新后的宠物美容服务"));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.productname").value("更新后的宠物美容服务"));
     }
 
     /**
@@ -144,13 +152,14 @@ class ProductControllerTest {
      */
     @Test
     void testDelete_Success() throws Exception {
-        when(productService.deleteById(1)).thenReturn(true);
+        when(productService.deleteById(anyInt())).thenReturn(true);
 
         mockMvc.perform(delete("/product")
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(true));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").value(true));
     }
 
     /**
@@ -160,13 +169,14 @@ class ProductControllerTest {
      */
     @Test
     void testQueryById_NotFound() throws Exception {
-        when(productService.queryById(999)).thenReturn(null);
+        when(productService.queryById(anyInt(), any())).thenReturn(null);
 
         mockMvc.perform(get("/product/detail")
                         .param("id", "999")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").doesNotExist());
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
     /**
@@ -194,12 +204,29 @@ class ProductControllerTest {
     @Test
     void testStockCheck() throws Exception {
         testProduct.setKucun("0"); // 库存为0
-        when(productService.queryById(1)).thenReturn(testProduct);
+        when(productService.queryById(anyInt(), any())).thenReturn(testProduct);
 
         mockMvc.perform(get("/product/detail")
                         .param("id", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.kucun").value("0"));
+                .andExpect(jsonPath("$.data.kucun").value("0"));
+    }
+
+    /**
+     * 测试用例ID: TC_PC_009
+     * 测试描述: 空列表查询
+     * 边界条件测试
+     */
+    @Test
+    void testQueryByPage_EmptyList() throws Exception {
+        when(productService.queryByPage(any(Product.class))).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/product")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.list").isEmpty())
+                .andExpect(jsonPath("$.total").value(0));
     }
 }

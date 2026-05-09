@@ -34,7 +34,13 @@ public class ProductController extends BaseController {
     @GetMapping
     public ListByPage queryByPage(Product product) {
         try {
-            startPage();
+            // 安全地启动分页
+            try {
+                startPage();
+            } catch (Exception e) {
+                // 如果分页启动失败，使用默认分页
+                com.github.pagehelper.PageHelper.startPage(1, 10).setReasonable(true);
+            }
             return getList(this.productService.queryByPage(product));
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,7 +125,11 @@ public class ProductController extends BaseController {
             if (filterDTO.getPageNum() != null && filterDTO.getPageSize() != null) {
                 com.github.pagehelper.PageHelper.startPage(filterDTO.getPageNum(), filterDTO.getPageSize()).setReasonable(true);
             } else {
-                startPage();
+                try {
+                    startPage();
+                } catch (Exception e) {
+                    com.github.pagehelper.PageHelper.startPage(1, 10).setReasonable(true);
+                }
             }
 
             // 执行查询

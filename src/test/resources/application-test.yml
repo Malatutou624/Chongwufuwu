@@ -43,3 +43,5 @@ oss:
   accessKeyId: test-key
   accessKeySecret: test-secret
   urlPrefix: http://localhost:7002/uploads/
+  test:
+    enabled: false
