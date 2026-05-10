@@ -15,11 +15,9 @@ spring:
     init:
       mode: always
 
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-    timeout: 2000ms
+  # 测试环境禁用 Redis
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
   h2:
     console:
