@@ -37,7 +37,6 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
-          --bind-address=0.0.0.0
         ports:
           - 3306:3306
 
