@@ -1,10 +1,7 @@
 package com.javaPro.myProject.service;
 
-import com.aliyun.oss.OSS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,26 +11,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+/**
+ * 文件上传服务
+ * 使用本地存储进行文件上传
+ */
 @Service
 public class FileUploadService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadService.class);
 
-    @Autowired(required = false)
-    private OSS ossClient;
-
-    @Value("${oss.bucketName:default-bucket}")
-    private String bucketName;
-
-    @Value("${oss.urlPrefix:http://localhost:7002/uploads/}")
-    private String urlPrefix;
-
-    @Value("${oss.accessKeyId:your-access-key-id}")
-    private String accessKeyId;
-
     // 本地上传目录
     private final String localUploadDir = System.getProperty("user.dir") + "/uploads/";
 
+    /**
+     * 上传文件到本地存储
+     *
+     * @param file 上传的文件
+     * @return 文件访问路径
+     * @throws IOException 文件上传异常
+     */
     public String uploadFile(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IOException("文件为空");
@@ -52,29 +48,8 @@ public class FileUploadService {
 
         String fileName = UUID.randomUUID().toString() + extension;
 
-        // 尝试使用OSS上传
-        if (isOssConfigured()) {
-            try {
-                return uploadToOss(file, fileName);
-            } catch (Exception e) {
-                logger.warn("OSS上传失败，回退到本地存储: " + e.getMessage());
-            }
-        }
-
-        // 回退到本地存储
+        logger.info("上传文件: {} -> {}", originalFilename, fileName);
         return uploadToLocal(file, fileName);
-    }
-
-    private boolean isOssConfigured() {
-        return ossClient != null &&
-               accessKeyId != null && !accessKeyId.equals("your-access-key-id") &&
-               bucketName != null && !bucketName.equals("default-bucket");
-    }
-
-    private String uploadToOss(MultipartFile file, String fileName) throws IOException {
-        String objectName = "uploads/" + fileName;
-        ossClient.putObject(bucketName, objectName, file.getInputStream());
-        return urlPrefix + objectName;
     }
 
     private String uploadToLocal(MultipartFile file, String fileName) throws IOException {
@@ -87,6 +62,8 @@ public class FileUploadService {
         // 保存文件到本地
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath);
+
+        logger.info("文件已保存到: {}", filePath.toString());
 
         // 返回本地访问URL
         return "/uploads/" + fileName;
