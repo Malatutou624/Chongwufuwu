@@ -73,8 +73,3 @@ jobs:
         # Redis配置
         SPRING_REDIS_HOST: 127.0.0.1
         SPRING_REDIS_PORT: 6379
-        # OSS配置（测试用空值，避免初始化失败）
-        OSS_ENDPOINT: dummy
-        OSS_ACCESS_KEY_ID: dummy
-        OSS_ACCESS_KEY_SECRET: dummy
-        OSS_BUCKET_NAME: dummy
