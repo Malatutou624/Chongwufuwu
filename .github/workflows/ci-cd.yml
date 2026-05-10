@@ -73,3 +73,6 @@ jobs:
         # Redis配置
         SPRING_REDIS_HOST: 127.0.0.1
         SPRING_REDIS_PORT: 6379
+
+       # 强制关闭 Redis 自动连接（这是你现在报错的真正原因！）
+        SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
