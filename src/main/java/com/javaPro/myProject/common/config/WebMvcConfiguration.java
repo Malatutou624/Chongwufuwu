@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -16,10 +17,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     }
 
     @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 根路径重定向到登录页面
+        registry.addRedirectViewController("/", "/login");
+    }
+
+    @Override
 //    拦截器
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor())//添加拦截器
-                .excludePathPatterns("/login","uploading","/web/login","/web/register",
+                .excludePathPatterns("/login","/toLoginPage","/toRegisterPage","uploading","/web/login","/web/register",
                         "/logout",
                         "/toLogin",
                         "/toRegister",

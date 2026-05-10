@@ -33,6 +33,16 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping({"/toLoginPage"})// 独立登录页面（无侧边栏）
+    public String toLoginPage() {
+        return "login";
+    }
+
+    @GetMapping({"/toRegisterPage"})// 独立注册页面（无侧边栏）
+    public String toRegisterPage() {
+        return "register";
+    }
+
     /**
      * 登录接口
      * @param session

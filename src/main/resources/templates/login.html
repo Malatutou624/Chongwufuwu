@@ -44,7 +44,7 @@
                     <button type="button" id="login" class="btn">Login</button>
                 </div>
                 <div class="login-bottom">
-                    <a href="/web/register" id="register" class="">Create New Account</a>
+                    <a href="/toRegisterPage" id="register" class="">Create New Account</a>
                 </div>
 
         </div>
@@ -54,6 +54,12 @@
     </section>
 
 </body>
+<script>
+    // 如果页面被嵌入iframe中，强制跳出iframe，显示无侧边栏的独立登录页
+    if (window.self !== window.top) {
+        window.top.location.href = window.self.location.href;
+    }
+</script>
 <script src="/static/hAdmin/js/jquery.min.js?v=2.1.4"></script>
 
 <script src="/static/hAdmin/js/bootstrap.min.js?v=3.3.6"></script>

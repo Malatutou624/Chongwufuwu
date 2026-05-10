@@ -22,6 +22,9 @@ RUN mvn dependency:go-offline -B
 # 复制源代码
 COPY src ./src
 
+# 复制 docker 配置文件到 resources 目录
+COPY application-docker.yml ./src/main/resources/
+
 # 构建项目（跳过测试，测试在 CI 阶段已完成）
 RUN mvn clean package -DskipTests -B
 

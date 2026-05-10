@@ -93,13 +93,18 @@
 			<div class="row form-group text-center">
 				<div class="col-sm-12">
 					<button type="button" id="register" class="btn btn-primary btn-hover">Confirm Registration</button>
-					<a  href="/login" class="btn btn-primary btn-hover">Go to Login</a>
+					<a  href="/toLoginPage" class="btn btn-primary btn-hover">Go to Login</a>
 				</div>
 			</div>
 		</form> <!-- /form -->
 	</div>
 </div> <!-- ./container -->
-
+<script>
+    // 如果页面被嵌入iframe中，强制跳出iframe，显示无侧边栏的独立注册页
+    if (window.self !== window.top) {
+        window.top.location.href = window.self.location.href;
+    }
+</script>
 <!-- jquery latest version -->
 <script src="/static/register/js/jquery.min.js"></script>
 <!-- popper.min.js -->

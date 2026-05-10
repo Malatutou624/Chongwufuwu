@@ -29,8 +29,8 @@ public class WebController {
     }
     @GetMapping("register")
     public String register(){
-
-        return "register";
+        // 使用redirect让浏览器刷新到独立页面，避免在iframe中显示侧边栏
+        return "redirect:/toRegisterPage";
     }
     @GetMapping("tmoney")
     public String tmoney(){
@@ -41,8 +41,8 @@ public class WebController {
 
     @GetMapping("login")
     public String login(){
-
-        return "login";
+        // 使用redirect让浏览器刷新到独立页面，避免在iframe中显示侧边栏
+        return "redirect:/toLoginPage";
     }
 
     @GetMapping("test-api")

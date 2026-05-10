@@ -19,7 +19,7 @@ services:
       mysql:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - app-network
     volumes:
@@ -42,7 +42,7 @@ services:
       MYSQL_USER: app_user
       MYSQL_PASSWORD: app_password
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
@@ -65,16 +65,15 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
     networks:
       - app-network
     restart: unless-stopped
-    command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # Nginx反向代理
   nginx:
