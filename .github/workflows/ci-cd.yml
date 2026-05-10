@@ -31,11 +31,13 @@ jobs:
         env:
           MYSQL_DATABASE: chongwufuwu
           MYSQL_ROOT_PASSWORD: Acx20050624
+          MYSQL_ALLOW_EMPTY_PASSWORD: "no"
         options: >-
           --health-cmd="mysqladmin ping -u root -pAcx20050624"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
+          --bind-address=0.0.0.0
         ports:
           - 3306:3306
 
@@ -47,18 +49,27 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    # 等待 MySQL 完全就绪（修复版）
     - name: Wait for MySQL
       run: |
-        until mysql -h127.0.0.1 -uroot -pAcx20050624 -e "SELECT 1"; do sleep 1; done
+        for i in {1..30}; do
+          if mysql -h 127.0.0.1 -u root -p"Acx20050624" -e "SELECT 1" chongwufuwu; then
+            echo "✅ MySQL is ready"
+            break
+          fi
+          echo "⏳ Waiting for MySQL..."
+          sleep 2
+        done
       env:
         MYSQL_PWD: Acx20050624
 
+    # 运行测试并开启完整调试日志，方便定位问题
     - name: Run all tests
-      run: mvn test -Dspring.profiles.active=test -e
+      run: mvn test -Dspring.profiles.active=test -e -X
       env:
-        SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/chongwufuwu?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        # 修复数据库 URL，添加时区、自动创建库等关键参数
+        SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/chongwufuwu?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
         SPRING_DATASOURCE_USERNAME: root
         SPRING_DATASOURCE_PASSWORD: Acx20050624
-        
-        # 测试环境关闭 Redis，解决启动失败
+        # 禁用 Redis 自动配置
         SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
