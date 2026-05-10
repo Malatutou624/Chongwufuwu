@@ -32,21 +32,12 @@ jobs:
           MYSQL_DATABASE: chongwufuwu
           MYSQL_ROOT_PASSWORD: Acx20050624
         options: >-
-          --health-cmd="mysqladmin ping -u root"
-          --health-interval=10s
+          --health-cmd="mysqladmin ping -u root -pAcx20050624"
+          --health-interval=5s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
         ports:
           - 3306:3306
-      redis:
-        image: redis:7-alpine
-        options: >-
-          --health-cmd="redis-cli ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 6379:6379
 
     steps:
     - uses: actions/checkout@v4
@@ -56,7 +47,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    # 关键：等待服务就绪
     - name: Wait for MySQL
       run: |
         until mysql -h127.0.0.1 -uroot -pAcx20050624 -e "SELECT 1"; do sleep 1; done
@@ -64,15 +54,11 @@ jobs:
         MYSQL_PWD: Acx20050624
 
     - name: Run all tests
-      run: mvn test -Dspring.profiles.active=test
+      run: mvn test -Dspring.profiles.active=test -e
       env:
-        # 数据库配置
-        SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/chongwufuwu?serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/chongwufuwu?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
         SPRING_DATASOURCE_USERNAME: root
         SPRING_DATASOURCE_PASSWORD: Acx20050624
-        # Redis配置
-        SPRING_REDIS_HOST: 127.0.0.1
-        SPRING_REDIS_PORT: 6379
-
-       # 强制关闭 Redis 自动连接（这是你现在报错的真正原因！）
+        
+        # 测试环境关闭 Redis，解决启动失败
         SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
